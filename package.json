@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "cli-progress": "^3.9.0",
+    "yeelight-node": "^1.1.5"
+  },
+  "name": "pomodor-light-strip",
+  "description": "PomodoroLightStrip",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeje720/PomodoroLightStrip.git"
+  },
+  "keywords": [
+    "nodejs"
+  ],
+  "author": "jeje720",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeje720/PomodoroLightStrip/issues"
+  },
+  "homepage": "https://github.com/jeje720/PomodoroLightStrip#readme"
+}
