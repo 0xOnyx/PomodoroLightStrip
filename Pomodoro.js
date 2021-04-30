@@ -1,10 +1,11 @@
 
 
 class Pomodoro{
-    constructor(callbackFinishTime, callbackFinishBreak, time = 25, pause = 5){
+    constructor(callbackFinishTime, callbackFinishBreak, time = 25, pause = 5, auto = false){
         this.time   = {
             time : time,
             break: pause,
+            auto: auto,
         }
 
         this.callback = {
@@ -28,7 +29,8 @@ class Pomodoro{
     stopTime(){
         clearInterval(this.interval)
         this.currentTime = 0
-        this.startBreak()
+        if(this.time.auto)
+             this.startBreak()
         this.callback.callbackFinishTime()
     }
 

@@ -27,7 +27,18 @@ const {Pomodoro} = require("./Pomodoro.js")
 const yeelight = new Yeelight({ip: "", port: 55443})
 
 
-yeelight
+const finishTime = ()=>{
+
+}
+
+const finishBreak = ()=>{
+    
+}
+
+const start = async ()=>{
+    pm = new Pomodoro()
+
+}
 
 let pm = new Pomodoro(
     ()=>{console.log("timefinish")}, 
