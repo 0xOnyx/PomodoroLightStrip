@@ -24,27 +24,62 @@ bar.stop()
 const {Yeelight}   = require("yeelight-node")
 const {Pomodoro} = require("./Pomodoro.js")
 
-const yeelight = new Yeelight({ip: "", port: 55443})
+const yeelight = new Yeelight({ip: "192.168.1.228", port: 55443})
+
 
 
 const finishTime = ()=>{
 
+    let flow = [
+        [1900, 1, 16724736, 100], 
+        //[1900, 1, 16750899, 100],
+        //[1900, 1, 15105570, 100],
+    ]
+
+    yeelight.stop_cf()
+    yeelight.start_cf(0, 1, flow)
 }
 
 const finishBreak = ()=>{
-    
+    let flow = [
+        [1900, 1, 16724736, 100], 
+        //[1900, 1, 16750899, 100],
+        //[1900, 1, 15105570, 100],
+    ]
+
+    yeelight.stop_cf()
+    yeelight.start_cf(0, 1, flow)
 }
 
 const start = async ()=>{
-    pm = new Pomodoro()
+    let flow = [
+        [1900, 1, 65280, 100], 
+        //[1900, 1, 16750899, 100],
+        //[1900, 1, 15105570, 100],
+    ]
+
+    yeelight.stop_cf()
+    yeelight.start_cf(0, 1, flow)
+
+    let pm = new Pomodoro(finishTime, finishBreak, 25 *60, 1 * 60, false)
+    pm.startTime()
+
+    setTimeout(()=>{
+        pm.startBreak()
+
+        let flow = [
+            [1900, 1, 3381759, 100], 
+            //[1900, 1, 16750899, 100],
+            //[1900, 1, 15105570, 100],
+        ]
+    
+        yeelight.stop_cf()
+        yeelight.start_cf(0, 1, flow)
+    }, (28 * 60 * 1000) )
+
+    //await checkValide()
+
 
 }
 
-let pm = new Pomodoro(
-    ()=>{console.log("timefinish")}, 
-    ()=>{console.log("timebreakfinish"),
-    1,
-    2
-})
-
-pm.startTime()
+start()
