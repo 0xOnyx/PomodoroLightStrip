@@ -13,19 +13,17 @@ const bar = new cliProgress.SingleBar({
 
 //Temps en seconde 
 class Pomodoro{
-    constructor(yeelight, callbackFinishTime, callbackFinishBreak, time = 25, pause = 5, auto = false, nombre = 1, mqtt, io){
+    constructor(yeelight, callbackFinishTime, callbackFinishBreak, time = 25, pause = 5, auto = false, nombre = 1, mqtt){
         
         this.mqtt = mqtt
-        this.yeelight = yeelight
-        this.io = io
+        this.yeelight = yeelight,
 
         this.COLORS = 
         {
-            time: {red: 162, green: 155, blue: 254},
+            time: {red: 94, green: 252, blue: 3},
             finish_time:  {red: 252, green: 207, blue: 3},
-            break: {red: 253  , green: 203, blue: 110 },
+            break: {red: 3  , green: 157, blue: 252 },
             finish_break: {red: 252, green: 3  , blue: 3},
-            finish: {red: 255, green: 255, blue: 255}
         }
 
         this.time   = {
@@ -45,11 +43,9 @@ class Pomodoro{
         this.iteration = 0;
 
         this.data_to_mqtt = {
-            active: false,
-            position: "time", //time, finish_time, break , finish_break
+            active: true,
+            position: "time", //time, finish_time, break , finish_time
             time: 0,  //time sur 100%
-            iteration: 0,
-            maxIteration: nombre,
             colors: {
                 red: 0,
                 green: 0,
@@ -59,14 +55,14 @@ class Pomodoro{
         }
 
         this.mqtt.publish("pomodoro/info", JSON.stringify(this.data_to_mqtt))
-        this.io.emit("pomodoro/info", this.data_to_mqtt)
         this.yeelight.set_power("on")
     }
 
-    pushToLight(rgb)
+    pushToLight(flow)
     {    
         return new Promise((resolve, reject)=>{
-            this.yeelight.set_rgb(Object.values(rgb))
+            this.yeelight.stop_cf()
+            this.yeelight.start_cf(0, 1, flow)
             setTimeout(()=>{resolve()}, 3000)
         })
         
@@ -81,12 +77,7 @@ class Pomodoro{
                     reject()
                 }
             })
-            
-            this.io.emit("pomodoro/info/web", this.data_to_mqtt)
-
-            setTimeout(()=>{
-                resolve()
-            }, 3000)
+            setTimeout(()=>{resolve()}, 2000)
         })
     }
 
@@ -94,54 +85,35 @@ class Pomodoro{
         return new Promise(async (resolve, reject)=>{
             this.currentTime = Date.now()
             this.timeStart = Date.now()
-            //bar.start(timeToBreak, 0)
+            bar.start(timeToBreak, 0)
             this.data_to_mqtt.time = 0
-            this.data_to_mqtt.position = status
-            await this.pushToMqtt(status)
             
             while(true)
             {
                 let difference = this.currentTime - this.timeStart
                 this.currentTime = Date.now()
-                //bar.update(difference)
+                bar.update(difference)
 
                 let pourcentage = ((difference) * 100) / timeToBreak
                 pourcentage = Math.round(pourcentage)
-
                 if(this.data_to_mqtt.time < pourcentage){
                     this.data_to_mqtt.time = pourcentage
+                    this.data_to_mqtt.position = status
+                    console.log(this.data_to_mqtt)
                     await this.pushToMqtt(status)
                 }
 
-                
-                if(difference >= timeToBreak )
+                if(difference >= timeToBreak)
                 {
-                    //bar.stop()
+                    bar.stop()
                     resolve()
                     break
                 }
-                
-                if(!this.data_to_mqtt.active)
-                {
-                    this.data_to_mqtt.active = false
-                    this.data_to_mqtt.position = "time"
-                    this.data_to_mqtt.time = 0
-                    this.data_to_mqtt.colors = this.COLORS.finish
-        
-                    setTimeout(async ()=>{
-                        await this.pushToLight(this.data_to_mqtt.colors)
-                        await this.pushToMqtt()
-                    }, (3 * 1000) )  
-                    break
-                }
-
             }  
         })
     }
 
     async startTime(){
-
-        this.data_to_mqtt.active = true
 
         let flow = [
             [2000, 1, 2600544, 100], //#27ae60
@@ -150,19 +122,18 @@ class Pomodoro{
             [2000, 1, 1482885, 100],//#16a085
         ]
 
-        
+        await this.pushToLight(flow)
+
         this.data_to_mqtt.colors = this.COLORS.time
-        this.data_to_mqtt.active = true
-        await this.pushToLight(this.data_to_mqtt.colors)
         await this.timer(this.time.time, "time")
         
         flow = [
             [1900, 1, 16724736, 100]
         ]
         
-        
+        await this.pushToLight(flow)
+
         this.data_to_mqtt.colors = this.COLORS.finish_time
-        await this.pushToLight(this.data_to_mqtt.colors)
         this.data_to_mqtt.position = "finish_time"
         this.data_to_mqtt.time = 100
         await this.pushToMqtt()
@@ -171,6 +142,7 @@ class Pomodoro{
 
         if(this.time.auto){       //si automatique lauch directly
             this.startBreak()
+            console.log("launch break")
         }
     }
 
@@ -186,9 +158,9 @@ class Pomodoro{
             //[1900, 1, 15105570, 100],
         ]
 
-        
+        await this.pushToLight(flow)
+
         this.data_to_mqtt.colors = this.COLORS.break
-        await this.pushToLight(this.data_to_mqtt.colors)
         await this.timer(this.time.break, "break")
 
         flow = [
@@ -197,10 +169,9 @@ class Pomodoro{
             //[1900, 1, 15105570, 100],
         ]
     
-        
-        this.data_to_mqtt.iteration += 1
+        await this.pushToLight(flow)
+
         this.data_to_mqtt.colors = this.COLORS.finish_break
-        await this.pushToLight(this.data_to_mqtt.colors)
         this.data_to_mqtt.position = "finish_break"
         this.data_to_mqtt.time = 100
         await this.pushToMqtt()
@@ -211,19 +182,7 @@ class Pomodoro{
 
         if(this.time.auto && this.iteration < this.time.nombre){       //si automatique lauch directly
             this.startTime()
-        }
-        else if(!this.time.auto && this.iteration > this.time.nombre)
-        {
-            this.data_to_mqtt.active = false
-            this.data_to_mqtt.position = "time"
-            this.data_to_mqtt.time = 0
-            this.data_to_mqtt.colors = this.COLORS.finish
-
-            setTimeout(async ()=>{
-                await this.pushToLight(this.data_to_mqtt.colors)
-                await this.pushToMqtt()
-            }, (70 * 1000) )  
-        
+            console.log("New pomodoro")
         }
         
     }

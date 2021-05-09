@@ -1,0 +1,352 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans|Roboto");
+:root{
+  --light: white;
+  --primary: #D73A31;
+  --dark: #08708A;
+}
+#pomodoro{
+  background:-moz-linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+  background:-webkit-linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+  background:linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+  margin:5% 20%;
+  padding:0;
+  font-size:16px;
+  font-family: 'Open Sans', sans-serif;
+  border: red solid 2px;
+
+}
+.btn{
+  width:2rem;
+  height:2rem;
+  font-size:1rem;
+  background-color:transparent;
+  border:none;
+  color:var(--light);
+}
+.btn:hover, .btn:focus{
+  cursor:pointer;
+  outline:none;
+  color:var(--primary);
+}
+
+.wrapper{
+  display:grid;
+  justify-items: center;
+  color:var(--light);
+}
+.mainBody{
+  background-color:var(--dark);
+  box-shadow: 0 5px 8px 0 rgba(0,0,0, 0.2),0 7px 20px 0 rgba(0,0,0, 0.17);
+  justify-items:center;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat (6,1fr);
+  height: 780px;
+  width: 600px;
+}
+.topBtns{
+  grid-area: topBtns;
+  justify-self:end;
+  padding-top:.5rem;
+  padding-right:.5rem;
+}
+.header{
+  grid-area:header;
+  margin-top:1rem;
+  margin-bottom:1rem;
+  padding:1rem;
+}
+/* Center Circle */
+.circle{
+  grid-area: circle;
+  text-align:center;
+  padding:1rem;
+  border:3px solid var(--light);
+  width:200px;
+  height:200px;
+  border-radius:50%;
+}
+#status{
+  margin-top:1.5rem;
+  font-size:1.5rem;
+}
+#timeDisplay{
+  font-size:3rem;
+  margin-top:1.5rem;
+}
+#playPauseBtn{
+  margin-top:1.5rem;
+  background-color:transparent;
+  border:none;
+  font-size:1.5rem;
+}
+/* Session and Break Settings */
+.session{
+  grid-area:session;
+  padding:0;
+}
+.sessionBtns{
+  font-size:1.5rem;
+}
+.session p, .break p{
+  text-align:center;
+  font-size:1rem;
+}
+.break{
+  grid-area:break;
+  padding:0;
+}
+.breakBtns{
+  font-size:1.5rem;
+}
+/* Reset Button */
+.resetBtn{
+  grid-area:resetBtn;
+  width:100%;
+  height:3rem;
+  padding:.5rem;
+  background-color:var(--light);
+  color:var(--primary);
+  font-weight:bold;
+  letter-spacing:.2rem;
+}
+/* Status Message */
+.statusMessage{
+  grid-area:statusMessage;
+  text-align:center;
+}
+footer p{
+  font-size:12px;
+  color:black;
+}
+footer a{
+  text-decoration:none;
+  color:var(--primary);
+}
+
+/* Modal Section */
+.modal{
+  display:none;
+  position:fixed;
+  z-index:2;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  overflow:auto;
+  background-color: rgba(0,0,0,0.5);
+}
+.modal-content{
+  background-color: var(--light);
+  color: var(--dark);
+  margin:15% auto;
+  width:70%;
+  box-shadow: 0 5px 8px 0 rgba(0,0,0, 0.2),0 7px 20px 0 rgba(0,0,0, 0.17);
+  animation-name: modalopen;
+  animation-duration: 1s;
+}
+.modal-header h2{
+  margin:0;
+}
+.modal-header{
+  background:var(--primary);
+  padding:15px;
+  color:white;
+}
+.modal-body{
+  padding:10px 20px;
+}
+.modal-body a{
+  text-decoration:none;
+  color:var(--primary);
+  font-weight:bold;
+}
+.closeBtn{
+  color:var(--light);
+  float:right;
+  font-size:1.5rem;
+  font-weight:bold;
+}
+.closeBtn:hover,.closeBtn:focus{
+  color:var(--dark);
+  text-decoration:none;
+  cursor:pointer;
+}
+@keyframes modalopen{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+/* To Do List Modal */
+.toDoListModal{
+  display:none;
+  position:fixed;
+  z-index:1;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  overflow:auto;
+  background-color: rgba(0,0,0,0.5);
+}
+.toDoContent{
+  background-color: var(--light);
+  color: var(--primary);
+  margin:15% auto;
+  width:40%;
+  padding:1rem;
+  box-shadow: 0 5px 8px 0 rgba(0,0,0, 0.2),0 7px 20px 0 rgba(0,0,0, 0.17);
+  animation-name: toDoModalOpen;
+  animation-duration: 1s;
+}
+.toDoContent h3{
+  text-align:center;
+  margin-top:.5rem;
+}
+.toDoCloseBtn{
+  color:var(--dark);
+  float:right;
+  font-size:1.5rem;
+  font-weight:bold;
+}
+.toDoCloseBtn:hover{
+  color:var(--primary);
+  cursor:pointer;
+}
+#addToDoBtn{
+  background-color:var(--primary);
+}
+.addBtn{
+  font-size:16px;
+  width:4rem;
+  padding:.5rem;
+  border-radius:3px;
+}
+.addBtn:hover, .addBtn:focus{
+  color:var(--light);
+  outline:none;
+}
+.textInput{
+  padding:.5rem;
+  border-radius:3px;
+  width:15rem;
+  margin-left:6rem;
+  position:relative;
+}
+#myUl{
+  margin-top:1rem;
+}
+ul{
+  margin:0;
+  padding:0;
+  list-style:none;
+  font-size:1rem;
+}
+ul li{
+  cursor:pointer;
+  padding:.5rem;
+  position: relative;
+  padding-left:2rem;
+  list-style-type:none;
+  background: #eee;
+  transition:0.2s;
+  color:var(--dark);
+
+  /* Make list items unselectable */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+ul li:nth-child(odd){
+  background-color: #f9f9f9;
+}
+ul li:hover{
+  background:#ddd;
+}
+ul li.checked{
+  background: var(--primary);
+  color: var(--light);
+  text-decoration: line-through;
+}
+ul li.checked:before{
+  content:'';
+  position:absolute;
+  border-color:var(--light);
+  border-style: solid;
+  border-width: 0 2px 2px 0;
+  top:10px;
+  left:16px;
+  transform: rotate(45deg);
+  height:10px;
+  width:5px;
+}
+.close{
+  position:absolute;
+  right:0;
+  top:0;
+  padding-right:.5rem;
+  color: var(--dark);
+}
+.close:hover, .closeBtn:focus{
+  color:var(--primary);
+  cursor:pointer;
+}
+@keyframes toDoModalOpen{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+/*Media Queries */
+@media screen and (max-width:1024px) and (min-width:800px){
+.toDoContent{
+     width:50%;
+}
+}
+@media screen and (max-width:780px) and (min-width:425px){
+body{
+    margin:5% 10%;
+  }
+.toDoContent{
+   width:60%;
+}
+.header{
+   text-align:center;
+ }
+}
+@media screen and (max-width:414px) and (min-width:325px){
+body{
+    margin:5% 5%;
+  }
+.modal-content{
+    width:80%;
+}
+.toDoContent{
+ width:70%;
+}
+.textInput{
+  width:10rem;
+  margin-left:0;
+}
+.header{
+    text-align:center;
+}
+}
+@media screen and (max-width:320px){
+body{
+    margin:5% 5%;
+  }
+.modal-content{
+    width:80%;
+}
+.toDoContent{
+ width:80%;
+}
+.textInput{
+  width:10rem;
+  margin-left:0;
+}
+.header{
+    text-align:center;
+ }
+}

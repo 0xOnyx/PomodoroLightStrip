@@ -13,7 +13,7 @@ let flow = [
     [1900, 1, 15105570, 100],
 ]
 
-yeelight.start_cf(0, 0, flow)
+//yeelight.start_cf(0, 0, flow)
 //yeelight.stop_cf()
 //yeelight.set_rgb([100, 255, 100], "smooth", 700)
 //yeelight.set_bright(10, "smooth", 700)

@@ -20,66 +20,88 @@ bar.update(100)
 bar.stop()
 */
 
+const socketIo      = require("socket.io")
+const http          = require("http")
+const {Yeelight}    = require("yeelight-node")
+const {Pomodoro}    = require("./Pomodoro.js")
 
-const {Yeelight}   = require("yeelight-node")
-const {Pomodoro} = require("./Pomodoro.js")
+const express       = require("express")
+
+
+const app         = express()
+const {client}    = require("./mqtt.js")
+
 
 const yeelight = new Yeelight({ip: "192.168.1.228", port: 55443})
 
+const server = http.createServer(app)
+let io = socketIo(server, 
+    {cors: {
+        origin: "*"
+    }
+    })
+server.listen(process.env.PORT || 878)
 
 
-const finishTime = ()=>{
+const finishTime = ()=>{}
 
-    let flow = [
-        [1900, 1, 16724736, 100], 
-        //[1900, 1, 16750899, 100],
-        //[1900, 1, 15105570, 100],
-    ]
-
-    yeelight.stop_cf()
-    yeelight.start_cf(0, 1, flow)
-}
-
-const finishBreak = ()=>{
-    let flow = [
-        [1900, 1, 16724736, 100], 
-        //[1900, 1, 16750899, 100],
-        //[1900, 1, 15105570, 100],
-    ]
-
-    yeelight.stop_cf()
-    yeelight.start_cf(0, 1, flow)
-}
-
-const start = async ()=>{
-    let flow = [
-        [1900, 1, 65280, 100], 
-        //[1900, 1, 16750899, 100],
-        //[1900, 1, 15105570, 100],
-    ]
-
-    yeelight.stop_cf()
-    yeelight.start_cf(0, 1, flow)
-
-    let pm = new Pomodoro(finishTime, finishBreak, 25 *60, 1 * 60, false)
-    pm.startTime()
-
-    setTimeout(()=>{
-        pm.startBreak()
-
-        let flow = [
-            [1900, 1, 3381759, 100], 
-            //[1900, 1, 16750899, 100],
-            //[1900, 1, 15105570, 100],
-        ]
-    
-        yeelight.stop_cf()
-        yeelight.start_cf(0, 1, flow)
-    }, (28 * 60 * 1000) )
-
-    //await checkValide()
+const finishBreak = ()=>{}
 
 
-}
+let pm = new Pomodoro(yeelight, finishTime, finishBreak, 25 , 5 , false, 5, client, io)
 
-start()
+//let pm = new Pomodoro(yeelight, finishTime, finishBreak, 25 , 5 , false, 5, client, io)
+//pm.startTime()
+
+io.on("connection", (socket)=>{
+    socket.on("start_pomodor", (data)=>{
+        if(pm.data_to_mqtt.active)
+            return 
+        
+        let options = {
+            time: data.time || 25,
+            break: data.break || 5,
+            iteration: data.break || 1,
+            auto: data.auto || false,
+        }
+
+        if(!pm.data_to_mqtt.active)
+        {
+            pm = new Pomodoro(
+                    yeelight,
+                    finishTime, finishBreak,
+                    options.time , options.break, options.auto, options.iteration, 
+                    client, io
+                )
+            pm.startTime()
+        }   
+    })
+
+    socket.on("restart", ()=>{
+        if(!pm.data_to_mqtt.active)
+            return 
+        
+        if(pm.data_to_mqtt.position === "finish_time")
+            pm.startBreak()
+
+        if(pm.data_to_mqtt.position === "finish_break")
+            pm.startTime()
+
+    })
+
+    socket.on("reset", ()=>{
+        if(pm.data_to_mqtt.active)
+            pm.data_to_mqtt.active = false
+            pm.data_to_mqtt.iteration = pm.time.nombre
+    })
+})  
+
+//setTimeout(()=>{yeelight.closeConnection()}, 2000)
+
+
+
+app.use(express.static(__dirname + "/pomodoro/build"))
+
+app.get("/", (req, res)=>{
+    res.sendFile(__dirname + "/pomodoro/build/index.html")
+})

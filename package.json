@@ -2,6 +2,9 @@
   "dependencies": {
     "cli-progress": "^3.9.0",
     "colors": "^1.4.0",
+    "express": "^4.17.1",
+    "mqtt": "^4.2.6",
+    "socket.io": "^4.0.1",
     "yeelight-node": "^1.1.5"
   },
   "name": "pomodor-light-strip",

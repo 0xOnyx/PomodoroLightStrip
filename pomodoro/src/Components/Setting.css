@@ -1,0 +1,46 @@
+
+.submit span
+{   
+    font-size: 40px;
+
+    padding-left: 60px;
+    padding-right: 60px;
+    position: relative;
+    bottom: 10px;
+
+}
+
+
+.settings
+{
+    width: 120px;
+    margin: 0px;
+    padding: 0px;
+}
+
+.settings div
+{
+    position: relative;
+    top: -7px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+}
+
+.settings div p
+{
+    display: block;
+    margin: 0px;
+    padding: 0px;
+}
+
+.settings div span
+{
+    display: block;
+    cursor: pointer;
+    height: 30px;
+}
+
