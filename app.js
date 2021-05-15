@@ -54,6 +54,8 @@ let pm = new Pomodoro(yeelight, finishTime, finishBreak, 25 , 5 , false, 5, clie
 //pm.startTime()
 
 io.on("connection", (socket)=>{
+    socket.emit("pomodoro/info", pm.data_to_mqtt)
+
     socket.on("start_pomodor", (data)=>{
         if(pm.data_to_mqtt.active)
             return 
